@@ -1,0 +1,19 @@
+machine:
+  node:
+    version: 7.4.0
+dependencies:
+  cache_directories:
+    - /opt/circleci/nodejs/v7.4.0/bin
+    - /opt/circleci/nodejs/v7.4.0/lib/node_modules
+  pre:
+    - sh ./scripts/global_modules.sh
+  override:
+    - npm install
+  post:
+    - npm run build
+deployment:
+  default:
+    branch: [master, production, prototype1, release1]
+    commands:
+      - sh ./scripts/deploy.sh
+
