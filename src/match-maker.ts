@@ -8,7 +8,7 @@ import {Client, ClientComponent} from './client';
 import {Room} from './room';
 import {IOEvent, MatchEvent} from 'event-types';
 import {Building} from './building';
-import {ShipControl, Simulator} from './simulation';
+import {Simulator} from './simulation';
 
 /**
  * Providers users the ability to join and leave matches

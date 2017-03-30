@@ -15,8 +15,8 @@ import {Connection} from './connection';
  */
 export class Match extends Room implements INetworkEntity {
 
-    private static MAX_MATCH_SIZE: number = 2;
-    private static MATCH_START_SYNC_TIME: number = 3000;
+    private static MAX_MATCH_SIZE: number = NaN;
+    private static MATCH_START_SYNC_TIME: number = 0;
 
     private label: string;
     private matchMaker: MatchMaker;
