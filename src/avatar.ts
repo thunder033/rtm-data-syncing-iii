@@ -1,8 +1,8 @@
 /**
  * Created by gjr8050 on 3/29/2017.
  */
-import {NetworkEntity} from "./network-index";
-import {bind} from "bind-decorator";
+import {NetworkEntity} from './network-index';
+import {bind} from 'bind-decorator';
 import {Vector3} from './math';
 import {Direction} from 'pulsar-lib/dist/src/game-params';
 import {Clock} from './clock';
