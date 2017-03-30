@@ -14,9 +14,10 @@ const network = angular.module('network', [
     simpleRequest.name
 ]);
 
-
 ADT.simpleRequest = {
-    HttpConfig: 'simple-request.HttpConfig'
+    HttpConfig: 'simple-request.HttpConfig',
+    SimpleSocket: 'simple-request.SimpleSocket',
+    SimpleHttp: 'simple-request.SimpleHttp',
 };
 
 ADT.network = {

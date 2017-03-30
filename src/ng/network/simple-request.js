@@ -41,7 +41,7 @@ function SimpleSocket($q) {
                 resolve(data);
             });
         });
-    }
+    };
 }
 
 /**

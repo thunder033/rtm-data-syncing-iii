@@ -10,14 +10,15 @@ resolve: ADT => [
     ADT.ng.$socket,
     ADT.ng.$q,
     ADT.simpleRequest.HttpConfig,
+    ADT.config.Path,
     socketFactory]};
 
-function socketFactory($socket, $q, HttpConfig) {
+function socketFactory($socket, $q, HttpConfig, Path) {
 
     class Socket {
 
         constructor(credentials) {
-            const io = require('socket.io-client')(`${location.protocol}//${location.host}`, {query: HttpConfig.getQueryString(credentials)});
+            const io = require('socket.io-client')(Path.warpApi, {query: HttpConfig.getQueryString(credentials), transports: ['websocket', 'jsonp-polling']});
             const ioSocket = io.connect();
 
             this.socket = $socket({ioSocket: ioSocket});
@@ -32,6 +33,7 @@ function socketFactory($socket, $q, HttpConfig) {
          */
         request(event, body, timeoutDuration = 3000) {
             return $q((resolve, reject) => {
+                //TODO: use something better than this, relatively high chance of collisions
                 const id = ~~(Math.random() * 100000);
                 this.socket.emit(event, {reqId: id, body});
 
@@ -57,7 +59,7 @@ function socketFactory($socket, $q, HttpConfig) {
                 this.socket.on(errorKey, (err) => {
                     endRequest(this.socket);
                     reject(err);
-                })
+                });
             });
         }
 
