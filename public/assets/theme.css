@@ -1,0 +1,120 @@
+html, body {
+    font-size: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+h1 {
+    font-size: 2em;
+    background: #3b4;
+    color: #fff;
+    text-shadow: 1px 0 2px #000;
+    height: 1.5em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: .075em .25em;
+    box-sizing: border-box;
+    margin: 0;
+    z-index: 10;
+}
+
+button {
+    padding: .3em;
+}
+
+.wrapper {
+    padding-top: 3em;
+    box-sizing: border-box;
+}
+
+#lobby,
+.wrapper,
+#game-wrapper,
+.warp-wrapper,
+#game,
+#game canvas {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.staging-match-user-list {
+    padding: .3em;
+}
+
+.staging-match-user-list li {
+    list-style: none;
+    border: 1px #ccc solid;
+    padding: .3em;
+    height: 1.3em;
+    margin-bottom: .3em;
+}
+
+.error {
+    color: #c00;
+}
+
+.staging-panel {
+    width: 30em;
+    padding: 1em;
+    border-left: 1px #ccc solid;
+    box-sizing: border-box;
+    height: 100%;
+    float: right;
+}
+
+.match-list {
+    width: 8em;
+}
+
+.diagrams {
+    margin-right: 30em;
+    height: 100%;
+    position: relative;
+}
+
+.diagrams .description {
+    position: absolute;
+    width: 35em;
+    top: 1em;
+    right: 15em;
+    font-size: .9em;
+}
+
+.diagrams img {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.diagram-controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10em;
+    padding: .5em;
+}
+
+.diagram-controls label {
+    font-weight: bold;
+    display: block;
+}
+
+select {
+    overflow: hidden;
+    width: 100%;
+}
+
+select option {
+    padding: .5em;
+}
+
+.warp-wrapper {
+    width: 100%;
+    height: 100%;
+}

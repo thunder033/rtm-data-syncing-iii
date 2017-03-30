@@ -1,0 +1,25 @@
+<div id="lobby">
+    <h2>Gravity!</h2>
+
+    <span class="error" ng-bind="errorMessage"></span>
+    Status: <span ng-bind="getStatusName(curStatus)"></span><br>
+
+    <div ng-if="curStatus === status.PLAY" id="game-wrapper" ng-controller="game.PlayCtrl">
+        <!--<span>State: {{state}}</span>-->
+        <div ng-if="state === states.LOADING">Loading...</div>
+        <div ng-if="state === states.SYNCING">
+            <span>{{match.getUsers()[0].getName()}} vs. {{match.getUsers()[1].getName()}}</span><br>
+            Start Game in <span ng-bind="secondsToStart"></span>
+        </div>
+
+        <div ng-controller="game.WarpCtrl" class="warp-wrapper" ng-show="state === states.PLAYING">
+            <span ng-bind="posX"></span><span> </span>
+            <span ng-bind="lossPct + '%'"></span>
+            <span ng-bind="updateTime"></span>
+            <m-easel id="game"></m-easel>
+        </div>
+
+        <button ng-disabled="state !== states.PLAYING" ng-click="endGame()">End Game</button>
+
+    </div>
+</div>
