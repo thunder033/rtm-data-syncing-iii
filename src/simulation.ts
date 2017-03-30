@@ -110,7 +110,7 @@ export class AvatarControl extends ClientComponent {
         let cmd = null;
         const timestamp: number = Date.now() - (this.connection.getPing() || 0);
         // calculate the timestamp
-        switch(data.method) {
+        switch (data.method) {
             case 'jump':
                 cmd = new JumpCommand({avatar: this.avatar, timestamp});
                 break;
@@ -118,6 +118,8 @@ export class AvatarControl extends ClientComponent {
                 const direction = parseInt(data.direction, 10);
                 cmd = new MoveCommand({direction, avatar: this.avatar, timestamp});
                 break;
+            default:
+                throw new ReferenceError(`Unrecognized avatar command ${data.method}`);
         }
 
         this.commandQueue.enqueue(timestamp, cmd);

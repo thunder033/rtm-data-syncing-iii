@@ -12,17 +12,13 @@ import {SyncServer} from './sync-server';
 import {NetworkIndex} from './network-index';
 import {Building} from './building';
 import {Simulator} from './simulation';
+import {RPG} from './rpg';
+import {MatchMaker} from './match-maker';
 
 const HTTP_ROUTES = {
     '/': 'public/index.html',
-    '/assets/apiStructure.png': 'public/assets/apiStructure.png',
     '/assets/theme.css': 'public/assets/theme.css',
-    '/assets/uiStructure.png': 'public/assets/uiStructure.png',
     '/dist/bundle.js': 'public/dist/bundle.js',
-    '/views/lobby.html': 'public/views/lobby.html',
-    '/views/play.html': 'public/views/play.html',
-    '/views/results.html': 'public/views/results.html',
-    '/views/staging-match.html': 'public/views/staging-match.html',
 };
 
 // init the application
@@ -33,4 +29,6 @@ const syncServer = new SyncServer(httpServer.getServer());
 // Add Components that define server functionality
 syncServer.addComponent(Building);
 syncServer.addComponent(NetworkIndex);
+syncServer.addComponent(MatchMaker);
 syncServer.addComponent(Simulator);
+syncServer.addComponent(RPG);
