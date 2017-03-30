@@ -8,7 +8,7 @@
     "build": "npm run srcCompile && grunt build-prod",
     "srcCompile": "cd src && tsc -p . && cd ..",
     "pretest": "tslint \"src/**/*.ts\" \"test/**/*.ts\" && tsc -p ./",
-    "test": "./node_modules/.bin/mocha --reporter spec test/**/*.js",
+    "test": "echo \"no tests\"",
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push && git push --tags",
