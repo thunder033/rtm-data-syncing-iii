@@ -1,10 +1,8 @@
-'use strict';
 /**
  * Created by gjr8050 on 2/24/2017.
  */
 
 window.PriorityQueue = require('../priority-queue').PriorityQueue;
-const lobby = require('./lobby');
 const network = require('./network');
 const game = require('./game');
 const mallet = require('./mallet');
@@ -15,9 +13,8 @@ const ADT = require('./app.dependency-tree').ADT;
 const angular = require('angular');
 require('angular-q-spread');
 
-angular.module('warp-test-client', [
+angular.module('gravity-client', [
     network.name,
-    lobby.name,
     game.name,
     mallet.name,
     require('angular-ui-router'),
@@ -27,23 +24,15 @@ angular.module('warp-test-client', [
     ADT.ng.$urlRouterProvider,
     ADT.ng.$locationProvider,
 ($stateProvider, $urlRouterProvider, $locationProvider) => {
-    $urlRouterProvider.otherwise('/lobby');
+    $urlRouterProvider.otherwise('/game');
     $locationProvider.hashPrefix('');
 
-    $stateProvider.state('lobby', {
-        url: '/lobby',
+    $stateProvider.state('game', {
+        url: '/game',
         templateUrl: 'views/lobby.html',
-        controller: ADT.lobby.LobbyCtrl,
-    }).state('play', {
-        url: '/play/:gameId',
-        templateUrl: 'views/play.html',
-        controller: ADT.game.PlayCtrl,
-    }).state('results', {
-        url: '/results/:matchId',
-        templateUrl: 'views/results.html',
-        controller: ADT.game.ResultsCtrl,
+        controller: ADT.game.LobbyCtrl,
     });
-}]).run([MDT.Scheduler, MDT.Log, function(MScheduler, Log){
+}]).run([MDT.Scheduler, MDT.Log, (MScheduler, Log) => {
     Log.config({level: Log.Info});
     MScheduler.startMainLoop();
 }]);
