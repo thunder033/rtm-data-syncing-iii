@@ -10,18 +10,18 @@ resolve: ADT => [
     ADT.ng.$socket,
     ADT.ng.$q,
     ADT.simpleRequest.HttpConfig,
-    ADT.config.Path,
     socketFactory]};
 
-function socketFactory($socket, $q, HttpConfig, Path) {
-
+function socketFactory($socket, $q, HttpConfig) {
     class Socket {
 
         constructor(credentials) {
-            const io = require('socket.io-client')(Path.warpApi, {query: HttpConfig.getQueryString(credentials), transports: ['websocket', 'jsonp-polling']});
-            const ioSocket = io.connect();
+            const io = require('socket.io-client')(`${location.protocol}//${location.host}`, {
+                query: HttpConfig.getQueryString(credentials),
+                transports: ['websocket', 'jsonp-polling']});
 
-            this.socket = $socket({ioSocket: ioSocket});
+            const ioSocket = io.connect();
+            this.socket = $socket({ioSocket});
         }
 
         /**
