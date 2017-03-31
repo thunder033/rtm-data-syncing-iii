@@ -29,7 +29,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
         }
 
         sync(data) {
-            NetworkEntity.getById(User, data.host).then(user => this.host = user);
+            // NetworkEntity.getById(User, data.host).then((user) => { this.host = user; });
             delete data.host;
             super.sync(data);
         }
@@ -108,7 +108,7 @@ function matchFactory(Connection, ClientRoom, User, NetworkEntity, $rootScope) {
     }
 
     function triggerMatchStart(data) {
-        matches.get(data.matchId).onStart(data.startTime, data.gameId);
+        // matches.get(data.matchId).onStart(data.startTime, data.gameId);
     }
 
     function triggerMatchEnd(data) {
