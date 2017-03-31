@@ -19,6 +19,7 @@ const HTTP_ROUTES = {
     '/': 'public/index.html',
     '/assets/theme.css': 'public/assets/theme.css',
     '/dist/bundle.js': 'public/dist/bundle.js',
+    '/views/game.html': 'public/views/game.html',
 };
 
 // init the application
