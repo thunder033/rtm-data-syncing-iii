@@ -1,19 +1,23 @@
-'use strict';
 /**
  * Created by Greg on 12/10/2016.
  */
-var config = require('angular')
+const ADT = require('./app.dependency-tree').ADT;
+
+ADT.config = {
+    Env: 'config.Env',
+    Path: 'config.Path',
+};
+
+const config = require('angular')
     .module('config', []);
 
-config.constant('config.Env', (()=>{
-    var host = location.href;
-    if(host.indexOf('localhost') > -1){
+config.constant(ADT.config.Env, (() => {
+    const host = location.href;
+    if(host.indexOf('localhost') > -1) {
         return 'dev';
-    }
-    else if(host.indexOf('stage') > -1){
+    } else if(host.indexOf('stage') > -1) {
         return 'stage';
-    }
-    else {
+    } else {
         return 'prod';
     }
 })());
@@ -25,9 +29,11 @@ config.constant('config.Env', (()=>{
  *  @property appPath
  *  @property scriptModifier
  *  @property relativeBase
+ *  @property warpApi
+ *  @property protocol
  */
-config.provider('config.Path', [
-    'config.Env',
+config.provider(ADT.config.Path, [
+    ADT.config.Env,
     PathProvider
 ]);
 
@@ -49,14 +55,23 @@ function PathProvider(Env) {
         }
     }
 
-    var protocol = Env === 'dev' ? 'http://' : 'https://'; 
-    var paths = {
+    const protocol = Env === 'dev' ? 'http://' : 'https://';
+    function getWarpApiPath(env) {
+        switch (env) {
+            case 'dev': return  `${protocol}localhost:3000`;
+            case 'stage': return `${protocol}pulsar-api-stage.herokuapp.com`;
+            case 'prod': return `${protocol}pulsar-api.herokuapp.com`;
+        }
+    }
+
+    const paths = {
         protocol: protocol,
         host: Env === 'dev' ? `${protocol}localhost:63342` : `${protocol}thunderlab.net`,
         appPath: getPathBase(Env),
         api: `${protocol}thunderlab.net/pulsar-media/api`,
         scriptModifier: getScriptModifier(Env),
         relativeBase: '../',
+        warpApi: getWarpApiPath(Env),
 
         forScript(name){return `${this.dist}/${name}${this.scriptModifier}.js`;},
         get base(){return this.host + this.appPath;},

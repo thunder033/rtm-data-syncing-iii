@@ -75,27 +75,6 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
         }
 
         /**
-         * Add an operation to be resolved before the connection is ready to be used
-         * @param promise
-         */
-        deferReady(promise) {
-            this.readyAwait.push(promise);
-            // short circuit the ready chain and replace it with a new promise
-            this.readyHandle.resolve($q.all(this.readyAwait));
-        }
-
-        /**
-         * Wait for any operations to complete that allow the connection to be used
-         * @returns {Promise<void|T>|Promise<U>|*|Promise.<T>|Promise<void>}
-         */
-        ready() {
-            console.log(`await ${this.readyAwait.length} operations...`);
-            return this.readyChain
-                .then(() => this.socket)
-                .catch(e => console.error('Failed to establish Connection: ', e));
-        }
-
-        /**
          * Authenticates with the given credientials and retrieves the user
          * @param credentials
          */
@@ -106,8 +85,8 @@ function connectionFactory($q, Socket, AsyncInitializer, Clock) {
             this.socket.get().on(IOEvent.connect, deferConnected.resolve);
             this.socket.get().on(IOEvent.joinServer, deferJoined.resolve);
 
-            this.socket.get().on(IOEvent.serverPing, (timestamp) => this.pong(timestamp));
-            this.socket.get().on(IOEvent.clientPong, (timestamp) => this.calculatePing(timestamp));
+            this.socket.get().on(IOEvent.serverPing, timestamp => this.pong(timestamp));
+            this.socket.get().on(IOEvent.clientPong, timestamp => this.calculatePing(timestamp));
 
             return this.ready().then(() => {
                 this.pingInterval = setInterval(() => this.sendPing(), this.pingIntervalTime);

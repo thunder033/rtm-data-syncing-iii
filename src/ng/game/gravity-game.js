@@ -2,6 +2,7 @@
  * Created by gjr8050 on 3/10/2017.
  */
 
+const EntityType = require('entity-types').EntityType;
 module.exports = {warpGameFactory,
 resolve: ADT => [
     ADT.game.Player,
@@ -75,7 +76,7 @@ function warpGameFactory(Player, NetworkEntity, ClientAvatar, User, $q, ClientRo
         }
     }
 
-    NetworkEntity.registerType(ClientSimulation);
+    NetworkEntity.registerType(ClientSimulation, EntityType.Simulation);
 
     return ClientSimulation;
 }

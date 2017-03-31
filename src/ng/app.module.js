@@ -3,6 +3,7 @@
  */
 
 window.PriorityQueue = require('../priority-queue').PriorityQueue;
+const config = require('./config.module');
 const network = require('./network');
 const game = require('./game');
 const mallet = require('./mallet');
@@ -14,6 +15,7 @@ const angular = require('angular');
 require('angular-q-spread');
 
 angular.module('gravity-client', [
+    config.name,
     network.name,
     game.name,
     mallet.name,
@@ -29,7 +31,7 @@ angular.module('gravity-client', [
 
     $stateProvider.state('game', {
         url: '/game',
-        templateUrl: 'views/lobby.html',
+        templateUrl: 'views/game.html',
         controller: ADT.game.LobbyCtrl,
     });
 }]).run([MDT.Scheduler, MDT.Log, (MScheduler, Log) => {
