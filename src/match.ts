@@ -41,8 +41,8 @@ export class Match extends Room implements INetworkEntity {
 
         // If there's no users left in the match, destroy it
         if (this.users.length === 0) {
-            this.end();
-            this.destroy();
+            // this.end();
+            // this.destroy();
         } else if ((user as Client).getComponent(MatchMember).isHost()) {
             this.host = this.users[0].getComponent(MatchMember);
             this.sync(null, this.getName());
@@ -116,7 +116,7 @@ export class Match extends Room implements INetworkEntity {
 
     public getSerializable(): Object {
         return Object.assign(super.getSerializable(), {
-            host: this.host.getId(),
+            host: this.host === null ? null : this.host.getId(),
             label: this.getLabel(),
             startTime: this.startTime,
             started: this.started,
