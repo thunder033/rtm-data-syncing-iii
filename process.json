@@ -1,0 +1,8 @@
+{
+  "apps": [{
+    "name": "gravity",
+    "script": "./src/app.js",
+    "watch": ["./src"],
+    "ignore_watch": ["./src/ng"]
+  }]
+}
