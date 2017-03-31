@@ -59,8 +59,8 @@ export class Vector3 {
      */
     constructor(x?: number, y?: number, z?: number) {
         this.x = x || 0;
-        this.y = y || x || 0;
-        this.z = z || x || 0;
+        this.y = typeof y === 'number' ? y : x || 0;
+        this.z = typeof z === 'number' ? z : x || 0;
         Object.seal(this);
     }
 
