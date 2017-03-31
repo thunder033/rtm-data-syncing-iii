@@ -12,7 +12,6 @@ resolve: ADT => [
     MDT.Camera,
     MDT.Geometry,
     MDT.Math,
-    MDT.Easel,
     MDT.Keyboard,
     MDT.const.Keys,
     MDT.Log,
@@ -62,7 +61,6 @@ function FluxCtrl($scope, MScheduler, MCamera, Geometry, MM, Keyboard, Keys, Log
                     player.getAvatar().getTransform(),
                     player.getColor()));
 
-                MCamera.render(Geometry.meshes.Cube, [tCube], MM.vec3(255, 0, 0));
                 MCamera.present();
             });
         });

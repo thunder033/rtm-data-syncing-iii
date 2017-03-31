@@ -12,11 +12,12 @@ resolve: ADT => [
     ADT.network.NetworkEntity,
     ADT.ng.$scope,
     ADT.ng.$timeout,
-    ADT.ng.$state,
     ADT.network.Client,
     ADT.network.Clock,
     ADT.game.WarpGame,
     ADT.mallet.Log,
+    ADT.network.Connection,
+    ADT.game.ClientMatch,
     PlayCtrl]};
 
 /**
@@ -25,16 +26,17 @@ resolve: ADT => [
  * @param NetworkEntity {NetworkEntity}
  * @param $scope
  * @param $timeout
- * @param $state
  * @param Client {Client}
  * @param Clock {Clock}
  * @param WarpGame {WarpGame}
  * @param Log
+ * @param Connection
+ * @param ClientMatch
  * @constructor
  */
-function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client, Clock, WarpGame, Log) {
+function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, Client, Clock, WarpGame, Log, Connection, ClientMatch) {
     if (Client.getUser() === null) {
-       return $state.go('lobby');
+       $scope.errMessage = 'User not connected to server';
     }
 
     const gameState = {
@@ -48,6 +50,7 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
     $scope.state = gameState.LOADING;
     $scope.secondsToStart = NaN;
     $scope.clientUser = null;
+    $scope.match = ClientMatch;
 
     function startGame() {
         $scope.state = gameState.PLAYING;
@@ -57,30 +60,27 @@ function PlayCtrl($stateParams, NetworkEntity, $scope, $timeout, $state, Client,
         Log.out(`start play at ${startTime}`);
     }
 
-    $scope.endGame =  function endGame() {
-        $scope.state = gameState.ENDED;
-        Client.emit(MatchEvent.requestEnd);
-    };
+    function loadGame(gameId) {
+        return NetworkEntity.getById(WarpGame, gameId)
+            .then((game) => {
+                if (!game) {
+                    const err = `No game was found with game id: ${$stateParams.gameId}`;
+                    Log.error(err);
+                    $scope.errMessage = err;
+                    return;
+                }
 
-    Client.addEventListener(MatchEvent.matchEnded, () => {
-        $state.go('results', {matchId: $scope.match.getId()});
-    });
+                $scope.warpGame = game;
+                $scope.clientUser = Client.getUser();
+                $scope.state = gameState.PLAYING;
+                startGame();
+            }).catch((e) => {
+            Log.error(e);
+            $scope.errMessage = e.message || e;
+        });
+    }
 
-    NetworkEntity.getById(WarpGame, $stateParams.gameId)
-        .then((game) => {
-            if (!game) {
-                const err = `No game was found with game id: ${$stateParams.gameId}`;
-                Log.error(err);
-                $scope.errMessage = err;
-                return;
-            }
-
-            $scope.warpGame = game;
-            $scope.clientUser = Client.getUser();
-            $scope.state = gameState.PLAYING;
-            startGame();
-        }).catch((e) => {
-        Log.error(e);
-        $state.go('lobby');
+    Connection.ready().then(() => {
+        Connection.getSocket().get().on(MatchEvent.matchStarted, (data) => { loadGame(data.gameId); });
     });
 }

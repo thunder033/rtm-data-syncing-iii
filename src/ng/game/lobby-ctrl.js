@@ -10,9 +10,10 @@ resolve: ADT => [
     ADT.network.Connection,
     ADT.ng.$scope,
     ADT.network.Client,
+    ADT.network.User,
     LobbyCtrl]};
 
-function LobbyCtrl(Connection, $scope, Client) {
+function LobbyCtrl(Connection, $scope, Client, User) {
     const status = {
         LOADING        : 0,
         UNAUTHENTICATED: 1,
@@ -23,6 +24,8 @@ function LobbyCtrl(Connection, $scope, Client) {
     $scope.curStatus = status.UNAUTHENTICATED;
     $scope.user = null;
     $scope.status = status;
+
+    $scope.useUser = User; // this is dumb lol
 
     $scope.getPing = () => Connection.getPing();
 
@@ -44,19 +47,16 @@ function LobbyCtrl(Connection, $scope, Client) {
             throw new Error('no user name provided');
         }
 
-        $scope.curStatus = status.LOADING;
         return Client.authenticate({name: username})
             .then(assignScope('user'));
     }
 
     Connection.ready().then(() => {
-        $scope.curStatus = status.READY;
+        $scope.curStatus = status.PLAY;
 
         Connection.getSocket().get().on(IOEvent.serverError,
             (err) => { $scope.errorMessage = `Error: ${(err.message || err)}`; });
-
-        return authenticate('rpgUser').then(() => {
-            $scope.curStatus = status.PLAY;
-        });
     });
+
+    authenticate('rpgUser');
 }

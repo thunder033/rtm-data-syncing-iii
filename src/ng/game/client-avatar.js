@@ -3,6 +3,7 @@
  */
 
 const GameEvent = require('event-types').GameEvent;
+const EntityType = require('entity-types').EntityType;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {avatarFactory,
@@ -42,7 +43,7 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
             this.tPrev = new Geometry.Transform();
             this.tDest = new Geometry.Transform();
             this.tRender = new Geometry.Transform()
-                .translate(0, 0, -2)
+                .translate(0, 0, -5)
                 .scaleBy(0.75, 0.5, 0.75);
 
             this.updateTS = 0;
@@ -69,9 +70,12 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
 
             this.updateTS = timeStamp;
             this.tPrev.position.x = this.tDest.position.x;
+            this.tPrev.position.y = this.tDest.position.y;
+            this.tPrev.position.z = this.tDest.position.z;
 
             this.tDest.position.x = parseFloat(params.position.x);
             this.tDest.position.y = parseFloat(params.position.y);
+            this.tDest.position.z = parseFloat(params.position.z);
 
             this.disp = MM.Vector3.subtract(this.tDest.position, this.tPrev.position);
 
@@ -110,7 +114,7 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
         }
     }
 
-    NetworkEntity.registerType(ClientAvatar);
+    NetworkEntity.registerType(ClientAvatar, EntityType.Avatar);
 
     return ClientAvatar;
 }

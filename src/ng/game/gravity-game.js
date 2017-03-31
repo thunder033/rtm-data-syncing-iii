@@ -3,6 +3,8 @@
  */
 
 const EntityType = require('entity-types').EntityType;
+const IOEvent = require('event-types').IOEvent;
+
 module.exports = {warpGameFactory,
 resolve: ADT => [
     ADT.game.Player,
@@ -11,9 +13,10 @@ resolve: ADT => [
     ADT.network.User,
     ADT.ng.$q,
     ADT.network.ClientRoom,
+    ADT.ng.$rootScope,
     warpGameFactory]};
 
-function warpGameFactory(Player, NetworkEntity, ClientAvatar, User, $q, ClientRoom) {
+function warpGameFactory(Player, NetworkEntity, ClientAvatar, User, $q, ClientRoom, $rootScope) {
     const utf8Decoder = new TextDecoder('utf-8');
     function createPlayers(buffer, match) {
         const players = [];
@@ -50,6 +53,9 @@ function warpGameFactory(Player, NetworkEntity, ClientAvatar, User, $q, ClientRo
             super(params.id);
             this.match = null;
             this.players = [];
+
+            $rootScope.$on(IOEvent.leftRoom, () => this.requestSync());
+            $rootScope.$on(IOEvent.joinedRoom, () => this.requestSync());
         }
 
         /**
@@ -59,7 +65,10 @@ function warpGameFactory(Player, NetworkEntity, ClientAvatar, User, $q, ClientRo
         sync(params) {
             return NetworkEntity.getById(ClientRoom, params.matchId).then((match) => {
                 this.match = match;
-                return createPlayers(params.avatarIds, match).then((players) => { this.players = players; });
+                return createPlayers(params.avatarIds, match).then((players) => {
+                    this.players.length = 0;
+                    Array.prototype.push.apply(this.players, players);
+                });
             }).finally(() => {
                 delete params.matchId;
                 delete params.avatarIds;
