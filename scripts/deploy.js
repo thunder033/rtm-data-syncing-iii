@@ -8,7 +8,7 @@ const deploy = require('heroku-deploy-tarball');
 
 const tarball = 'dist.tar.gz';
 const config = {
-    master    : {tarball, app: 'pulsar-api-stage'},
+    master    : {tarball, app: 'shielded-headland-32196'},
 };
 
 deploy(config[process.env.CIRCLE_BRANCH || 'master']);
