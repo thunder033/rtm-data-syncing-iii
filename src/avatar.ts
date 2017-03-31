@@ -8,16 +8,16 @@ import {Direction} from 'pulsar-lib/dist/src/game-params';
 import {Clock} from './clock';
 
 export class Level {
-    public static readonly FLOOR: number = 0;
-    public static readonly LEFT_WALL: number = -5;
-    public static readonly RIGHT_WALL: number = 5;
+    public static readonly FLOOR: number = -1;
+    public static readonly LEFT_WALL: number = -4;
+    public static readonly RIGHT_WALL: number = 4;
 }
 
 export class Avatar extends NetworkEntity {
 
-    private static readonly GRAVITY = -9.8;
-    private static readonly JUMP_MAGNITUDE = 10;
-    private static readonly MOVE_SPEED = 3;
+    private static readonly GRAVITY = -9.8 / 1000000;
+    private static readonly JUMP_MAGNITUDE = 5 / 1000;
+    private static readonly MOVE_SPEED = 3 / 1000;
 
     private position: Vector3;
     private velocity: Vector3;
@@ -30,6 +30,12 @@ export class Avatar extends NetworkEntity {
     constructor() {
         super(Avatar);
         this.clock = new Clock();
+        this.position = new Vector3(0, 5, -5);
+        this.velocity = new Vector3();
+        this.acceleration = new Vector3();
+
+        this.activeCmd = Direction.NONE;
+        this.lastCmd = Direction.NONE;
     }
 
     @bind
@@ -45,6 +51,8 @@ export class Avatar extends NetworkEntity {
             this.isInBounds(this.activeCmd * Avatar.MOVE_SPEED * dt)) {
 
             this.velocity.x = Avatar.MOVE_SPEED * this.activeCmd;
+        } else {
+            this.velocity.x = 0;
         }
 
         this.velocity.add(Vector3.scale(this.acceleration, dt));
@@ -70,7 +78,13 @@ export class Avatar extends NetworkEntity {
         }
     }
 
+    /**
+     * Move the avatar to the left or right
+     * @param direction
+     * @param pingDelay
+     */
     public move(direction: number, pingDelay: number) {
+
         if (direction !== Direction.NONE && direction !== this.lastCmd) {
             this.lastCmd = direction;
             this.activeCmd = direction;

@@ -158,6 +158,10 @@ export class Player extends ClientComponent implements INetworkEntity {
         };
     }
 
+    public getHue(): number {
+        return this.hue;
+    }
+
     public getId(): string {
         return this.user.getId();
     }
@@ -323,13 +327,20 @@ export class Simulation extends NetworkEntity {
         }
     }
 
+    public releaseHue(hue: number): void {
+        const hueIndex = this.usedHues.indexOf(hue);
+        if (hueIndex > -1) {
+            this.usedHues.slice(hueIndex, 1);
+        }
+    }
+
     /**
      * Indicates if the given value is used by a player already (within value constraint)
      * @param hue {number}: HSL hue value, 0 - 255
      * @returns {boolean}
      */
     private isUsedHue(hue: number): boolean {
-        const THRESHOLD = 50;
+        const THRESHOLD = 10;
         return this.usedHues.some((usedHue) => {
             return Math.abs(usedHue - hue) < THRESHOLD;
         });
