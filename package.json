@@ -1,6 +1,6 @@
 {
   "name": "rtm-data-syncing-iii",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Data Syncing III",
   "main": "src/app.js",
   "scripts": {
