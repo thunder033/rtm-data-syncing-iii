@@ -1,6 +1,5 @@
 <div id="lobby">
     <span class="error" ng-bind="errorMessage"></span>
-    Status: <span ng-bind="getStatusName(curStatus)"></span><br>
 
     <div ng-if="curStatus === status.PLAY" id="game-wrapper" ng-controller="game.PlayCtrl">
         <div ng-if="state === states.LOADING">Loading...</div>
@@ -10,9 +9,12 @@
         </div>
 
         <div ng-controller="game.WarpCtrl" class="warp-wrapper" ng-show="state === states.PLAYING">
-            <span ng-bind="posX"></span><span> </span>
-            <span ng-bind="lossPct + '%'"></span>
-            <span ng-bind="updateTime"></span>
+            <div class="debug-stats">
+                Status: <span ng-bind="getStatusName(curStatus)"></span><br>
+                Position: <span ng-bind="posX"></span><span> </span><br>
+                Packet Loss: <span ng-bind="lossPct + '%'"></span><br>
+                Last Update: <span ng-bind="updateTime"></span>
+            </div>
             <m-easel id="game"></m-easel>
         </div>
 

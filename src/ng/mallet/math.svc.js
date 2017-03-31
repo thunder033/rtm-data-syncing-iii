@@ -163,8 +163,10 @@ function MathService(){
      * Create a string representation of the vector
      * @returns {string}
      */
-    Vector3.prototype.toString = function(){
-        return '{' + this.x + ', ' + this.y + ', ' + this.z + '}';
+    Vector3.prototype.toString = function(precision = 10) {
+        return '{' + this.x.toFixed(precision) +
+            ', ' + this.y.toFixed(precision) +
+            ', ' + this.z.toFixed(precision) + '}';
     };
 
     Vector3.prototype.toBuffer = function(){

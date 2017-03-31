@@ -51,7 +51,7 @@ function FluxCtrl($scope, MScheduler, MCamera, Geometry, MM, Keyboard, Keys, Log
         Keyboard.onKeyUp(Keys.Right, sendKeysReleased);
 
         MScheduler.schedule(() => {
-            $scope.posX = clientAvatar.getTransform().position.x.toFixed(3);
+            $scope.posX = clientAvatar.getTransform().position.toString(3);
             $scope.lossPct = ~~(clientAvatar.getDataLoss() * 100);
             $scope.updateTime = clientAvatar.getUpdateTime();
 
