@@ -90,6 +90,13 @@ export class AvatarControl extends ClientComponent {
         return this.avatar;
     }
 
+    public onDisconnect(): void {
+        const simulation = this.server.getComponent(Simulator).getSimulation(this.match);
+        simulation.cancel(this.update);
+        simulation.cancel(this.avatar.update);
+        simulation.cancel(this.syncClients);
+    }
+
     @bind
     private update(dt: number): void {
         while (this.commandQueue.peek() !== null) {
@@ -264,6 +271,14 @@ export class Simulation extends NetworkEntity {
      */
     public schedule(operation: SimulationOperation, priority?: number) {
         this.operations.enqueue(priority || 0, operation);
+    }
+
+    /**
+     * Remove an operation from the update queue
+     * @param operation
+     */
+    public cancel(operation: SimulationOperation) {
+        this.operations.remove(operation);
     }
 
     public getState(): GameState {

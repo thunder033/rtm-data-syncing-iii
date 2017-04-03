@@ -33,6 +33,11 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             }
             super();
             this.id = id.id || id;
+
+            if (typeof this.id !== 'string' && typeof this.id !== 'number') {
+                throw new TypeError(`${typeof this.id} is not valid a valid Network ID type. Must be string or number.`);
+            }
+
             this.syncTime = 0;
             this.format = format;
 
