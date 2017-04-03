@@ -14,6 +14,7 @@ ADT.game = {
     ClientAvatar: 'game.ClientAvatar',
     WarpGame: 'game.WarpGame',
     LobbyCtrl: 'game.LobbyCtrl',
+    LerpedEntity: 'game.LerpedEntity',
 };
 
 const game = require('angular')
@@ -21,6 +22,7 @@ const game = require('angular')
         require('../network').name,
     ]);
 
+game.factory(ADT.game.LerpedEntity, require('./lerped-entity').resolve(ADT));
 game.controller(ADT.game.LobbyCtrl, require('./lobby-ctrl').resolve(ADT));
 game.factory(ADT.game.ClientMatch, require('./client-match').resolve(ADT));
 game.controller(ADT.game.PlayCtrl, require('./play-ctrl').resolve(ADT));

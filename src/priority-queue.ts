@@ -104,6 +104,29 @@ export class PriorityQueue {
     }
 
     /**
+     * Finds and removes first instance the item from the queue
+     * @param item {any}
+     */
+    public remove(item: any): void {
+        let node: QueueNode = this.root;
+        let prev: QueueNode = null;
+        do {
+            if (node.item === item) {
+                if (prev !== null) {
+                    prev.next = node.next;
+                } else {
+                    this.root = node.next;
+                }
+
+                break;
+            }
+
+            prev = node;
+            node = node.next;
+        } while (node !== null);
+    }
+
+    /**
      * Remove the next item from the queue
      * @returns {*}
      */

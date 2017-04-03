@@ -22,6 +22,11 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
      */
     class NetworkEntity extends EventTarget {
 
+        /**
+         *
+         * @param id {string}
+         * @param [format] {Map}
+         */
         constructor(id, format = null) {
             if (!id) {
                 throw new ReferenceError('NetworkEntity must be constructed with an ID');
@@ -51,9 +56,9 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
             return this.id;
         }
 
-        sync(params, bufferString) {
-            if(params instanceof ArrayBuffer) {
-                if(!(this.format instanceof Map)) {
+        sync(params, bufferString, storesValuesCB) {
+            if (params instanceof ArrayBuffer) {
+                if (!(this.format instanceof Map)) {
                     const type = NetworkEntity.getName(this.getType());
                     throw new ReferenceError(`${type} cannot sync a binary response without a format set`);
                 }
@@ -68,11 +73,17 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
                     return;
                 }
 
+                // allow the entity to store any values it will need after the update
+                if (storesValuesCB instanceof Function) {
+                    storesValuesCB();
+                }
+
+                // parse the buffer according the format set for this entity
                 let position = NetworkEntity.entityOffset;
 
                 this.format.forEach((type, field) => {
                     const size = this.sizes[field];
-                    if(type === DataType.String) {
+                    if (type === DataType.String) {
                         this[field] = bufferString.substr(position, size);
                     } else {
                         const method = NetworkEntity.readMethods.get(type);
@@ -188,7 +199,7 @@ function networkEntityFactory(Connection, $q, $rootScope, Log) {
          */
         static getById(type, id) {
             if (!type || typeof id !== 'string') {
-                throw new Error('Network entities must be identified by both type and name');
+                throw new Error('Network entities must be identified by both type and name.');
             }
 
             const lookupType = NetworkEntity.getLookupType(NetworkEntity.getName(type));
