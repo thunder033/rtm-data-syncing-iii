@@ -52,7 +52,6 @@ function FluxCtrl($scope, MScheduler, MCamera, Geometry, MM, Keyboard, Keys, Log
 
         MScheduler.schedule(() => {
             $scope.posX = clientAvatar.getTransform().position.toString(3);
-            $scope.lossPct = ~~(clientAvatar.getDataLoss() * 100);
             $scope.updateTime = clientAvatar.getUpdateTime();
 
             MScheduler.draw(() => {

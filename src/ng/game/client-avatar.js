@@ -4,6 +4,7 @@
 
 const GameEvent = require('event-types').GameEvent;
 const EntityType = require('entity-types').EntityType;
+const DataFormat = require('game-params').DataFormat;
 const MDT = require('../mallet/mallet.dependency-tree').MDT;
 
 module.exports = {avatarFactory,
@@ -13,7 +14,7 @@ resolve: ADT => [
     MDT.Geometry,
     MDT.Scheduler,
     MDT.Math,
-    ADT.network.Clock,
+    ADT.game.LerpedEntity,
     avatarFactory]};
 
 /**
@@ -23,20 +24,13 @@ resolve: ADT => [
  * @param Geometry
  * @param Scheduler
  * @param MM
- * @param Clock {Clock}
+ * @param LerpedEntity
  * @returns {ClientAvatar}
  */
-function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock) {
-    let syncCount = 0;
-    let tossCount = 0;
-
-    function lerp(a, disp, p) {
-        return MM.Vector3.scale(disp, p).add(a);
-    }
-
-    class ClientAvatar extends NetworkEntity {
-        constructor(params) {
-            super(params);
+function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, LerpedEntity) {
+    class ClientAvatar extends LerpedEntity {
+        constructor(params, id) {
+            super(id, DataFormat.POSITION);
 
             this.disp = MM.vec3(0);
 
@@ -46,10 +40,14 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
                 .translate(0, 0, -5)
                 .scaleBy(0.75, 0.5, 0.75);
 
-            this.updateTS = 0;
-            this.lastUpdate = Clock.getNow();
-            this.syncElapsed = 0;
-            this.lerpPct = 0;
+            Object.defineProperties(this, {
+                /* eslint-disable */
+                positionX: {set: x => this.tDest.position.x = x},
+                positionY: {set: y => this.tDest.position.y = y},
+                positionZ: {set: z => this.tDest.position.z = z},
+                /* eslint-enable */
+            });
+
             this.color = MM.vec3(255, 255, 255);
 
             Scheduler.schedule(this.update.bind(this));
@@ -59,41 +57,16 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
             return this.color;
         }
 
-        sync(params) {
-            const timeStamp = parseFloat(params.timestamp);
-            syncCount++;
-
-            if (timeStamp <= this.updateTS) {
-                tossCount++;
-                return;
-            }
-
-            this.updateTS = timeStamp;
-            this.tPrev.position.x = this.tDest.position.x;
-            this.tPrev.position.y = this.tDest.position.y;
-            this.tPrev.position.z = this.tDest.position.z;
-
-            this.tDest.position.x = parseFloat(params.position.x);
-            this.tDest.position.y = parseFloat(params.position.y);
-            this.tDest.position.z = parseFloat(params.position.z);
+        sync(buffer, bufferString) {
+            super.sync(buffer, bufferString, () => {
+                this.tPrev.position.set(this.tDest.position);
+            });
 
             this.disp = MM.Vector3.subtract(this.tDest.position, this.tPrev.position);
-
-            const updateTime = Clock.getNow();
-            this.syncElapsed = updateTime - this.lastUpdate;
-            this.lastUpdate = updateTime;
-
-            this.lerpPct = 0;
-
-            super.sync({});
         }
 
         getUpdateTime() {
-            return this.updateTS;
-        }
-
-        getDataLoss() {
-            return tossCount / syncCount;
+            return this.syncTime;
         }
 
         jump() {
@@ -105,8 +78,8 @@ function avatarFactory(NetworkEntity, Connection, Geometry, Scheduler, MM, Clock
         }
         
         update(dt) {
-            this.lerpPct += this.syncElapsed > 0 ? dt / this.syncElapsed : 0;
-            this.tRender.position.set(lerp(this.tPrev.position, this.disp, this.lerpPct));
+            super.update(dt);
+            this.tRender.position.set(LerpedEntity.lerpVector(this.tPrev.position, this.disp, this.lerpPct));
         }
 
         getTransform() {

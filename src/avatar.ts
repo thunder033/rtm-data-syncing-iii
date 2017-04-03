@@ -1,10 +1,10 @@
 /**
  * Created by gjr8050 on 3/29/2017.
  */
-import {NetworkEntity} from './network-index';
+import {BinaryNetworkEntity} from './network-index';
 import {bind} from 'bind-decorator';
 import {Vector3} from './math';
-import {Direction} from 'pulsar-lib/dist/src/game-params';
+import {DataFormat, Direction} from 'pulsar-lib/dist/src/game-params';
 import {Clock} from './clock';
 
 export class Level {
@@ -13,7 +13,7 @@ export class Level {
     public static readonly RIGHT_WALL: number = 4;
 }
 
-export class Avatar extends NetworkEntity {
+export class Avatar extends BinaryNetworkEntity {
 
     private static readonly GRAVITY = -9.8 / 1000000;
     private static readonly JUMP_MAGNITUDE = 5 / 1000;
@@ -28,11 +28,17 @@ export class Avatar extends NetworkEntity {
     private lastCmd: number; // the last command given to the ship
 
     constructor() {
-        super(Avatar);
+        super(Avatar, DataFormat.POSITION);
         this.clock = new Clock();
         this.position = new Vector3(0, 5, -5);
         this.velocity = new Vector3();
         this.acceleration = new Vector3();
+
+        Object.defineProperties(this, {
+            positionX: {get: () => this.position.x},
+            positionY: {get: () => this.position.y},
+            positionZ: {get: () => this.position.z},
+        });
 
         this.activeCmd = Direction.NONE;
         this.lastCmd = Direction.NONE;
@@ -69,6 +75,8 @@ export class Avatar extends NetworkEntity {
         }
 
         this.acceleration.set(0, Avatar.GRAVITY, 0);
+
+        this.updateBuffer();
     }
 
     public jump(pingDelay: number) {
@@ -105,12 +113,5 @@ export class Avatar extends NetworkEntity {
         const destPosition = this.position.x + displacement;
         // console.log(`${minBound.toFixed(2)} < ${destPosition.toFixed(2)} < ${maxBound.toFixed(2)}`);
         return destPosition <= maxBound && destPosition >= minBound;
-    }
-
-    public getSerializable() {
-        return Object.assign(super.getSerializable(), {
-            position: this.position,
-            timestamp: this.clock.now(),
-        });
     }
 }
